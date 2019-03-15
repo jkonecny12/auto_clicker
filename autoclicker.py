@@ -17,12 +17,30 @@ class XDoTool(object):
         return out.stdout.decode()
 
 
+class Point(object):
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return "Point({},{})".format(self.x, self.y)
+
+    @property
+    def str_x(self):
+        return str(self.x)
+
+    @property
+    def str_y(self):
+        return str(self.y)
+
+
 class MouseLocator(object):
 
     def __init__(self):
         self._runner = XDoTool()
         self._window = ""
-        self._coordinates = (0, 0)
+        self._coordinates = Point(0, 0)
 
     @property
     def window(self):
@@ -55,7 +73,7 @@ class MouseLocator(object):
             elif key == "WINDOW":
                 self._window = int(value)
 
-        self._coordinates = (x, y)
+        self._coordinates = Point(x, y)
 
 
 class MouseController(object):
@@ -65,7 +83,8 @@ class MouseController(object):
         self._window = window
 
     def set_position(self, position):
-        self._runner.run_tool(["mousemove", "--window", str(self._window), str(position[0]), str(position[1])])
+        self._runner.run_tool(["mousemove", "--window", str(self._window),
+                               position.str_x, position.str_y])
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import subprocess
+import time
 
 
 class XDoTool(object):
@@ -59,14 +60,20 @@ class MouseLocator(object):
 
 class MouseController(object):
 
-    def __init__(self):
+    def __init__(self, window):
         self._runner = XDoTool()
+        self._window = window
 
-    def set_position(self):
-        pass
+    def set_position(self, position):
+        self._runner.run_tool(["mousemove", "--window", str(self._window), str(position[0]), str(position[1])])
 
 
 if __name__ == "__main__":
     mouse = MouseLocator()
     mouse.get_mouse_location()
     print(mouse.coordinates, mouse.window)
+
+    time.sleep(1)
+
+    mouse_controller = MouseController(mouse.window)
+    mouse_controller.set_position(mouse.coordinates)

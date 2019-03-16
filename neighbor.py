@@ -29,19 +29,11 @@ def get_position(locator, question):
     return locator.coordinates
 
 
-if __name__ == "__main__":
-    ns = parse_args()
-    locator = MouseLocator()
-
-    controller = MouseController()
-    controller.delay_before = 0.5
-    controller.delay_after = 0.4
-
-    if ns.action == "help":
-        p_next = get_position(locator, "Move cursor to the next 5 people on the left button")
-        p_first = get_position(locator, "Move cursor to the first portrait HELP button")
-        p_second = get_position(locator, "Move cursor to the second portrait HELP button")
-        p_space = Point(p_second.x - p_first.x, 0)
+def click_all_help(locator, controller):
+    p_next = get_position(locator, "Move cursor to the next 5 people on the left button")
+    p_first = get_position(locator, "Move cursor to the first portrait HELP button")
+    p_second = get_position(locator, "Move cursor to the second portrait HELP button")
+    p_space = Point(p_second.x - p_first.x, 0)
 
     print(p_next)
 
@@ -53,3 +45,15 @@ if __name__ == "__main__":
             controller.left_click()
         controller.set_position(p_next)
         controller.left_click()
+
+
+if __name__ == "__main__":
+    ns = parse_args()
+    locator = MouseLocator()
+
+    controller = MouseController()
+    controller.delay_before = 0.5
+    controller.delay_after = 0.4
+
+    if ns.action == "help":
+        click_all_help(locator, controller)

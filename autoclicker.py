@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import subprocess
+import time
 
 
 class XDoTool(object):
@@ -79,13 +80,37 @@ class MouseController(object):
 
     def __init__(self, window=None):
         self._runner = XDoTool()
+        self._delay_before = 0
+        self._delay_after = 0
+
+    @property
+    def delay_before(self):
+        return self._delay_before
+
+    @delay_before.setter
+    def delay_before(self, value):
+        self._delay_before = value
+
+    @property
+    def delay_after(self):
+        return self._delay_after
+
+    @delay_after.setter
+    def delay_after(self, value):
+        self._delay_after = value
 
     def set_position(self, position):
         self._runner.run_tool(["mousemove", "--sync",
                                position.str_x, position.str_y])
 
     def left_click(self):
+        if self._delay_before != 0:
+            time.sleep(self._delay_before)
+
         self._runner.run_tool(["click", "1"])
+
+        if self._delay_after != 0:
+            time.sleep(self._delay_after)
 
 
 if __name__ == "__main__":

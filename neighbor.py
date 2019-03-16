@@ -44,6 +44,22 @@ def click_all_support(locator, controller):
         controller.left_click()
 
 
+def click_all_pubs(locator, controller):
+    p_next = get_position(locator, "Move cursor to the next 5 people on the left button")
+    p_first = get_position(locator, "Move cursor to the first portrait PUB button")
+    p_second = get_position(locator, "Move cursor to the second portrait PUB button")
+    p_space = Point(p_second.x - p_first.x, 0)
+
+    for i in range(0, 30):
+        for y in range(0, 5):
+            p = Point(p_first.x + (p_space.x * y), p_first.y + (p_space.y * y))
+            controller.set_position(p)
+            controller.left_click()
+            controller.left_click()
+        controller.set_position(p_next)
+        controller.left_click()
+
+
 if __name__ == "__main__":
     ns = parse_args()
     locator = MouseLocator()
@@ -54,3 +70,5 @@ if __name__ == "__main__":
 
     if ns.action == "support":
         click_all_support(locator, controller)
+    elif ns.action == "pub":
+        click_all_pubs(locator, controller)

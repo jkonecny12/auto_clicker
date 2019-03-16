@@ -5,18 +5,30 @@ import time
 from autoclicker import MouseLocator, MouseController, Point
 
 
+def ask_user_and_wait(question):
+    print(question)
+    input("Press any key and wait 3 secs")
+    print("=============================")
+    time.sleep(3)
+
+
+def get_position(locator, question):
+    ask_user_and_wait(question)
+    locator.get_mouse_location()
+    return locator.coordinates
+
+
 if __name__ == "__main__":
     locator = MouseLocator()
 
-    time.sleep(5)
-    locator.get_mouse_location()
     controller = MouseController()
     controller.delay_before = 0.5
     controller.delay_after = 0.4
 
-    p_next = locator.coordinates
-    p_first = Point(p_next.x + 62, p_next.y + 52)
-    p_space = Point(103, 0)
+    p_next = get_position(locator, "Move cursor to the next 5 people on the left button")
+    p_first = get_position(locator, "Move cursor to the first portrait HELP button")
+    p_second = get_position(locator, "Move cursor to the second portrait HELP button")
+    p_space = Point(p_second.x - p_first.x, 0)
 
     print(p_next)
 

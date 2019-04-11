@@ -1,25 +1,44 @@
 #!/usr/bin/python3
 
 import time
+import os
 
 from enum import Enum
+from configparser import ConfigParser
 
 from autoclicker import MouseLocator, MouseController, Point
 from argparse import ArgumentParser
 
 
+CONFIG_PATH = os.path.expanduser("~/.config/foe-clicker/foe-clicker.config")
+
+
 class PointNames(Enum):
-    NEXT_BUTTON = "Next 5 people"
+    NEXT_BUTTON = "next_left"
 
-    FIRST_SUPPORT_BUTTON = "First support"
-    SECOND_SUPPORT_BUTTON = "Second support"
+    FIRST_SUPPORT_BUTTON = "first_support"
+    SECOND_SUPPORT_BUTTON = "second_support"
 
-    FIRST_PUB_BUTTON = "First pub"
-    SECOND_PUB_BUTTON = "Second pub"
+    FIRST_PUB_BUTTON = "first_pub"
+    SECOND_PUB_BUTTON = "second_pub"
+
+    def get_description(self):
+        if self is PointNames.NEXT_BUTTON:
+            return "Next 5 people"
+        elif self is PointNames.FIRST_SUPPORT_BUTTON:
+            return "First support"
+        elif self is PointNames.SECOND_SUPPORT_BUTTON:
+            return "Second support"
+        elif self is PointNames.FIRST_PUB_BUTTON:
+            return "First pub"
+        elif self is PointNames.SECOND_PUB_BUTTON:
+            return "Second pub"
 
 
 class PointManager(object):
     """Store and load points used for further runs."""
+
+    _MAIN_SECTION = "MAIN"
 
     def __init__(self, locator):
         self._points = {}
@@ -29,13 +48,43 @@ class PointManager(object):
         self._points[name] = position
 
     def ask_for_point(self, point):
-        pos = self._get_position("Move cursor to the {} button".format(point.value))
+        pos = self._get_position("Move cursor to the {} button".format(point.get_description()))
         self.add_point(point, pos)
 
     def _get_position(self, question):
         ask_user_and_wait(question)
         self._locator.get_mouse_location()
         return locator.coordinates
+
+    def save_points(self):
+        config_parser = ConfigParser()
+
+        config_parser[self._MAIN_SECTION] = {}
+        main = config_parser[self._MAIN_SECTION]
+
+        for key, point in self._points.items():
+            main[key.value] = "{} {}".format(point.x, point.y)
+
+        self._create_config_dir()
+
+        with open(CONFIG_PATH, "w") as fd:
+            config_parser.write(fd)
+
+    def load_points(self):
+        config_parser = ConfigParser()
+        config_parser.read(CONFIG_PATH)
+
+        main = config_parser[self._MAIN_SECTION]
+
+        for key in main:
+            x, y = main[key].split(" ")
+            self.add_point(PointNames(key), Point(int(x), int(y)))
+
+    @staticmethod
+    def _create_config_dir():
+        conf_dir = os.path.dirname(CONFIG_PATH)
+        if not os.path.exists(conf_dir):
+            os.makedirs(conf_dir)
 
     def __getitem__(self, key):
         return self._points[key]

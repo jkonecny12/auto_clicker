@@ -2,8 +2,43 @@
 
 import time
 
+from enum import Enum
+
 from autoclicker import MouseLocator, MouseController, Point
 from argparse import ArgumentParser
+
+
+class PointNames(Enum):
+    NEXT_BUTTON = "Next"
+
+    FIRST_SUPPORT_BUTTON = "First support"
+    SECOND_SUPPORT_BUTTON = "Second support"
+
+    FIRST_PUB_BUTTON = "First pub"
+    SECOND_PUB_BUTTON = "Second pub"
+
+
+class PointManager(object):
+    """Store and load points used for further runs."""
+
+    def __init__(self, locator):
+        self._points = {}
+        self._locator = locator
+
+    def add_point(self, name, position):
+        self._points[name] = position
+
+    def ask_for_point(self, point):
+        pos = self._get_position("Move cursor to the {} button".format(point.value))
+        self.add_point(point, pos)
+
+    def _get_position(self, question):
+        ask_user_and_wait(question)
+        self._locator.get_mouse_location()
+        return locator.coordinates
+
+    def __getitem__(self, key):
+        return self._points[key]
 
 
 def parse_args():
@@ -23,40 +58,44 @@ def ask_user_and_wait(question):
     time.sleep(3)
 
 
-def get_position(locator, question):
-    ask_user_and_wait(question)
-    locator.get_mouse_location()
-    return locator.coordinates
-
-
 def click_all_support(locator, controller):
-    p_next = get_position(locator, "Move cursor to the next 5 people on the left button")
-    p_first = get_position(locator, "Move cursor to the first portrait SUPPORT button")
-    p_second = get_position(locator, "Move cursor to the second portrait SUPPORT button")
-    p_space = Point(p_second.x - p_first.x, 0)
+    point_mgr = PointManager(locator)
 
-    for i in range(0, 30):
+    point_mgr.ask_for_point(PointNames.NEXT_BUTTON)
+    point_mgr.ask_for_point(PointNames.FIRST_SUPPORT_BUTTON)
+    point_mgr.ask_for_point(PointNames.SECOND_SUPPORT_BUTTON)
+
+    p_space = Point(point_mgr[PointNames.SECOND_SUPPORT_BUTTON].x
+                    - point_mgr[PointNames.FIRST_SUPPORT_BUTTON].x, 0)
+
+    for i in range(0, 31):
         for y in range(0, 5):
-            p = Point(p_first.x + (p_space.x * y), p_first.y + (p_space.y * y))
+            p = Point(point_mgr[PointNames.FIRST_SUPPORT_BUTTON].x + (p_space.x * y),
+                      point_mgr[PointNames.FIRST_SUPPORT_BUTTON].y + (p_space.y * y))
             controller.set_position(p)
             controller.left_click()
-        controller.set_position(p_next)
+        controller.set_position(point_mgr[PointNames.NEXT_BUTTON])
         controller.left_click()
 
 
 def click_all_pubs(locator, controller):
-    p_next = get_position(locator, "Move cursor to the next 5 people on the left button")
-    p_first = get_position(locator, "Move cursor to the first portrait PUB button")
-    p_second = get_position(locator, "Move cursor to the second portrait PUB button")
-    p_space = Point(p_second.x - p_first.x, 0)
+    point_mgr = PointManager(locator)
 
-    for i in range(0, 30):
+    point_mgr.ask_for_point(PointNames.NEXT_BUTTON)
+    point_mgr.ask_for_point(PointNames.FIRST_PUB_BUTTON)
+    point_mgr.ask_for_point(PointNames.SECOND_PUB_BUTTON)
+
+    p_space = Point(point_mgr[PointNames.SECOND_PUB_BUTTON].x -
+                    point_mgr[PointNames.FIRST_PUB_BUTTON].x, 0)
+
+    for i in range(0, 31):
         for y in range(0, 5):
-            p = Point(p_first.x + (p_space.x * y), p_first.y + (p_space.y * y))
+            p = Point(point_mgr[PointNames.FIRST_PUB_BUTTON].x + (p_space.x * y),
+                      point_mgr[PointNames.FIRST_PUB_BUTTON].y + (p_space.y * y))
             controller.set_position(p)
             controller.left_click()
             controller.left_click()
-        controller.set_position(p_next)
+        controller.set_position(point_mgr[PointNames.NEXT_BUTTON])
         controller.left_click()
 
 

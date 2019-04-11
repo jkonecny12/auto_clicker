@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 
 
 class PointNames(Enum):
-    NEXT_BUTTON = "Next"
+    NEXT_BUTTON = "Next 5 people"
 
     FIRST_SUPPORT_BUTTON = "First support"
     SECOND_SUPPORT_BUTTON = "Second support"

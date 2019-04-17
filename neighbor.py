@@ -56,6 +56,19 @@ class PointManager(object):
         self._locator.get_mouse_location()
         return locator.coordinates
 
+    def has_point(self, point_name):
+        if point_name in self._points:
+            return True
+        else:
+            return False
+
+    def has_points(self, point_names):
+        for name in point_names:
+            if not self.has_point(name):
+                return False
+
+        return True
+
     def save_points(self):
         config_parser = ConfigParser()
 
@@ -71,6 +84,9 @@ class PointManager(object):
             config_parser.write(fd)
 
     def load_points(self):
+        if not os.path.exists(CONFIG_PATH):
+            return False
+
         config_parser = ConfigParser()
         config_parser.read(CONFIG_PATH)
 
@@ -79,6 +95,8 @@ class PointManager(object):
         for key in main:
             x, y = main[key].split(" ")
             self.add_point(PointNames(key), Point(int(x), int(y)))
+
+        return True
 
     @staticmethod
     def _create_config_dir():
@@ -107,12 +125,24 @@ def ask_user_and_wait(question):
     time.sleep(3)
 
 
+def test_missing_points(point_manager, points):
+    if not point_manager.has_points(points):
+        print("Some points are not stored")
+        print("Please run the application with a 'store' command")
+        return False
+
+    return True
+
+
 def click_all_support(locator, controller):
     point_mgr = PointManager(locator)
+    point_mgr.load_points()
 
-    point_mgr.ask_for_point(PointNames.NEXT_BUTTON)
-    point_mgr.ask_for_point(PointNames.FIRST_SUPPORT_BUTTON)
-    point_mgr.ask_for_point(PointNames.SECOND_SUPPORT_BUTTON)
+    if not test_missing_points(point_mgr,
+                               [PointNames.NEXT_BUTTON,
+                                PointNames.FIRST_SUPPORT_BUTTON,
+                                PointNames.SECOND_SUPPORT_BUTTON]):
+        return
 
     p_space = Point(point_mgr[PointNames.SECOND_SUPPORT_BUTTON].x
                     - point_mgr[PointNames.FIRST_SUPPORT_BUTTON].x, 0)
@@ -129,10 +159,13 @@ def click_all_support(locator, controller):
 
 def click_all_pubs(locator, controller):
     point_mgr = PointManager(locator)
+    point_mgr.load_points()
 
-    point_mgr.ask_for_point(PointNames.NEXT_BUTTON)
-    point_mgr.ask_for_point(PointNames.FIRST_PUB_BUTTON)
-    point_mgr.ask_for_point(PointNames.SECOND_PUB_BUTTON)
+    if not test_missing_points(point_mgr,
+                               [PointNames.NEXT_BUTTON,
+                                PointNames.FIRST_PUB_BUTTON,
+                                PointNames.SECOND_PUB_BUTTON]):
+        return
 
     p_space = Point(point_mgr[PointNames.SECOND_PUB_BUTTON].x -
                     point_mgr[PointNames.FIRST_PUB_BUTTON].x, 0)

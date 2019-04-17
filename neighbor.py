@@ -94,7 +94,7 @@ def parse_args():
     parser = ArgumentParser(description="Automatic mouse controller to visit all neighbors in one"
                             "game")
 
-    parser.add_argument("action", action="store", type=str, choices=["support", "pub"],
+    parser.add_argument("action", action="store", type=str, choices=["support", "pub", "store"],
                         help="""Run script for giving supports or visiting pubs.""")
 
     return parser.parse_args()
@@ -148,6 +148,18 @@ def click_all_pubs(locator, controller):
         controller.left_click()
 
 
+def store_points(locator):
+    point_mgr = PointManager(locator)
+
+    point_mgr.ask_for_point(PointNames.NEXT_BUTTON)
+    point_mgr.ask_for_point(PointNames.FIRST_SUPPORT_BUTTON)
+    point_mgr.ask_for_point(PointNames.SECOND_SUPPORT_BUTTON)
+    point_mgr.ask_for_point(PointNames.FIRST_PUB_BUTTON)
+    point_mgr.ask_for_point(PointNames.SECOND_PUB_BUTTON)
+
+    point_mgr.save_points()
+
+
 if __name__ == "__main__":
     ns = parse_args()
     locator = MouseLocator()
@@ -160,3 +172,5 @@ if __name__ == "__main__":
         click_all_support(locator, controller)
     elif ns.action == "pub":
         click_all_pubs(locator, controller)
+    elif ns.action == "store":
+        store_points(locator)

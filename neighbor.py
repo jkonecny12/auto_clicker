@@ -115,8 +115,19 @@ def parse_args():
     parser = ArgumentParser(description="Automatic mouse controller to visit all neighbors in one"
                             "game")
 
-    parser.add_argument("action", action="store", type=str, choices=["support", "pub", "store"],
-                        help="""Run script for giving supports or visiting pubs.""")
+    parser.add_argument("action", action="store", type=str,
+                        choices=["support", "pub", "all", "store"],
+                        help="""Run script for giving supports or visiting pubs.
+
+                        It is mandatory to call 'store' for the first time you are using this
+                        application!
+
+                        support -- support every person on the list
+                        pub     -- enter every person's pub
+                        all     -- make all supports and then visit all the pubs
+
+                        store   -- store all points and then you can use them for the actions
+                                   above""")
 
     return parser.parse_args()
 
@@ -193,6 +204,29 @@ def _run_cycle_people_row(controller,
             controller.left_click()
 
 
+def click_all(locator, controller):
+    point_mgr = PointManager(locator)
+    point_mgr.load_points()
+
+    if not test_missing_points(point_mgr,
+                               [PointNames.NEXT_BUTTON,
+                                PointNames.ON_START_BUTTON,
+                                PointNames.FIRST_SUPPORT_BUTTON,
+                                PointNames.SECOND_SUPPORT_BUTTON,
+                                PointNames.FIRST_PUB_BUTTON,
+                                PointNames.SECOND_PUB_BUTTON]):
+        return
+
+    click_all_support(locator, controller)
+    _set_row_to_start(controller, point_mgr[PointNames.ON_START_BUTTON])
+    click_all_pubs(locator, controller)
+
+
+def _set_row_to_start(controller, on_start_button_point):
+    controller.set_position(on_start_button_point)
+    controller.left_click()
+
+
 def store_points(locator):
     point_mgr = PointManager(locator)
 
@@ -217,5 +251,7 @@ if __name__ == "__main__":
         click_all_support(locator, controller)
     elif ns.action == "pub":
         click_all_pubs(locator, controller)
+    elif ns.action == "all":
+        click_all(locator, controller)
     elif ns.action == "store":
         store_points(locator)

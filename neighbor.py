@@ -15,6 +15,7 @@ CONFIG_PATH = os.path.expanduser("~/.config/foe-clicker/foe-clicker.config")
 
 class PointNames(Enum):
     NEXT_BUTTON = "next_left"
+    ON_START_BUTTON = "on_start"
 
     FIRST_SUPPORT_BUTTON = "first_support"
     SECOND_SUPPORT_BUTTON = "second_support"
@@ -25,6 +26,8 @@ class PointNames(Enum):
     def get_description(self):
         if self is PointNames.NEXT_BUTTON:
             return "Next 5 people"
+        elif self is PointNames.ON_START_BUTTON:
+            return "Back to start of the row"
         elif self is PointNames.FIRST_SUPPORT_BUTTON:
             return "First support"
         elif self is PointNames.SECOND_SUPPORT_BUTTON:

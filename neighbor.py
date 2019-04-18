@@ -171,15 +171,19 @@ def _run_clicking_cycle(first_action_point, second_action_point, next_button_poi
     p_space = Point(second_action_point.x - first_action_point.x, 0)
 
     for i in range(0, 31):
-        for y in range(0, 5):
-            p = Point(first_action_point.x + (p_space.x * y),
-                      first_action_point.y + (p_space.y * y))
-            controller.set_position(p)
-            controller.left_click()
-            if confirmation_click:
-                controller.left_click()
+        _run_cycle_people_row(p_space, first_action_point, confirmation_click)
         controller.set_position(next_button_point)
         controller.left_click()
+
+
+def _run_cycle_people_row(space, first_action_point, confirmation_click):
+    for y in range(0, 5):
+        p = Point(first_action_point.x + (space.x * y),
+                  first_action_point.y + (space.y * y))
+        controller.set_position(p)
+        controller.left_click()
+        if confirmation_click:
+            controller.left_click()
 
 
 def store_points(locator):

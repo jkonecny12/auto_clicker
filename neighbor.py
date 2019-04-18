@@ -231,6 +231,7 @@ def store_points(locator):
     point_mgr = PointManager(locator)
 
     point_mgr.ask_for_point(PointNames.NEXT_BUTTON)
+    point_mgr.ask_for_point(PointNames.ON_START_BUTTON)
     point_mgr.ask_for_point(PointNames.FIRST_SUPPORT_BUTTON)
     point_mgr.ask_for_point(PointNames.SECOND_SUPPORT_BUTTON)
     point_mgr.ask_for_point(PointNames.FIRST_PUB_BUTTON)

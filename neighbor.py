@@ -144,7 +144,8 @@ def click_all_support(locator, controller):
                                 PointNames.SECOND_SUPPORT_BUTTON]):
         return
 
-    _run_clicking_cycle(first_action_point=point_mgr[PointNames.FIRST_SUPPORT_BUTTON],
+    _run_clicking_cycle(controller=controller,
+                        first_action_point=point_mgr[PointNames.FIRST_SUPPORT_BUTTON],
                         second_action_point=point_mgr[PointNames.SECOND_SUPPORT_BUTTON],
                         next_button_point=point_mgr[PointNames.NEXT_BUTTON],
                         confirmation_click=False)
@@ -160,23 +161,26 @@ def click_all_pubs(locator, controller):
                                 PointNames.SECOND_PUB_BUTTON]):
         return
 
-    _run_clicking_cycle(first_action_point=point_mgr[PointNames.FIRST_PUB_BUTTON],
+    _run_clicking_cycle(controller=controller,
+                        first_action_point=point_mgr[PointNames.FIRST_PUB_BUTTON],
                         second_action_point=point_mgr[PointNames.SECOND_PUB_BUTTON],
                         next_button_point=point_mgr[PointNames.NEXT_BUTTON],
                         confirmation_click=True)
 
 
-def _run_clicking_cycle(first_action_point, second_action_point, next_button_point,
+def _run_clicking_cycle(controller,
+                        first_action_point, second_action_point, next_button_point,
                         confirmation_click):
     p_space = Point(second_action_point.x - first_action_point.x, 0)
 
     for i in range(0, 31):
-        _run_cycle_people_row(p_space, first_action_point, confirmation_click)
+        _run_cycle_people_row(controller, p_space, first_action_point, confirmation_click)
         controller.set_position(next_button_point)
         controller.left_click()
 
 
-def _run_cycle_people_row(space, first_action_point, confirmation_click):
+def _run_cycle_people_row(controller,
+                          space, first_action_point, confirmation_click):
     for y in range(0, 5):
         p = Point(first_action_point.x + (space.x * y),
                   first_action_point.y + (space.y * y))

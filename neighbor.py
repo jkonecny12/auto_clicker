@@ -144,17 +144,10 @@ def click_all_support(locator, controller):
                                 PointNames.SECOND_SUPPORT_BUTTON]):
         return
 
-    p_space = Point(point_mgr[PointNames.SECOND_SUPPORT_BUTTON].x
-                    - point_mgr[PointNames.FIRST_SUPPORT_BUTTON].x, 0)
-
-    for i in range(0, 31):
-        for y in range(0, 5):
-            p = Point(point_mgr[PointNames.FIRST_SUPPORT_BUTTON].x + (p_space.x * y),
-                      point_mgr[PointNames.FIRST_SUPPORT_BUTTON].y + (p_space.y * y))
-            controller.set_position(p)
-            controller.left_click()
-        controller.set_position(point_mgr[PointNames.NEXT_BUTTON])
-        controller.left_click()
+    _run_clicking_cycle(first_action_point=point_mgr[PointNames.FIRST_SUPPORT_BUTTON],
+                        second_action_point=point_mgr[PointNames.SECOND_SUPPORT_BUTTON],
+                        next_button_point=point_mgr[PointNames.NEXT_BUTTON],
+                        confirmation_click=False)
 
 
 def click_all_pubs(locator, controller):
@@ -167,17 +160,25 @@ def click_all_pubs(locator, controller):
                                 PointNames.SECOND_PUB_BUTTON]):
         return
 
-    p_space = Point(point_mgr[PointNames.SECOND_PUB_BUTTON].x -
-                    point_mgr[PointNames.FIRST_PUB_BUTTON].x, 0)
+    _run_clicking_cycle(first_action_point=point_mgr[PointNames.FIRST_PUB_BUTTON],
+                        second_action_point=point_mgr[PointNames.SECOND_PUB_BUTTON],
+                        next_button_point=point_mgr[PointNames.NEXT_BUTTON],
+                        confirmation_click=True)
+
+
+def _run_clicking_cycle(first_action_point, second_action_point, next_button_point,
+                        confirmation_click):
+    p_space = Point(second_action_point.x - first_action_point.x, 0)
 
     for i in range(0, 31):
         for y in range(0, 5):
-            p = Point(point_mgr[PointNames.FIRST_PUB_BUTTON].x + (p_space.x * y),
-                      point_mgr[PointNames.FIRST_PUB_BUTTON].y + (p_space.y * y))
+            p = Point(first_action_point.x + (p_space.x * y),
+                      first_action_point.y + (p_space.y * y))
             controller.set_position(p)
             controller.left_click()
-            controller.left_click()
-        controller.set_position(point_mgr[PointNames.NEXT_BUTTON])
+            if confirmation_click:
+                controller.left_click()
+        controller.set_position(next_button_point)
         controller.left_click()
 
 

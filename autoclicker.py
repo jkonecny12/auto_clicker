@@ -1,28 +1,8 @@
 #!/usr/bin/python3
 
-import subprocess
 import time
 
 from pymouse import PyMouse
-
-
-class XDoTool(object):
-    """Do a low level calls and reading of xdotool."""
-
-    def __init__(self):
-        self._program_name = "xdotool"
-
-    def run_tool(self, args):
-        """Run xdotool with arguments check output and return stdout
-
-        :param args: list of arguments for the xdotool
-        :type args: List[str]
-        """
-        cmd = [self._program_name]
-        cmd.extend(args)
-        out = subprocess.run(cmd, capture_output=True)
-        out.check_returncode()
-        return out.stdout.decode()
 
 
 class Point(object):

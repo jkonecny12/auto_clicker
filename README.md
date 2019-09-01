@@ -10,7 +10,7 @@ How to use
 
 1)
 
-Call `./neighbor store all` it will tell you to put mouse pointer to a specified position and press enter.
+Call `./neighbor store` it will tell you to put mouse pointer to a specified position and press enter.
 
 2)
 

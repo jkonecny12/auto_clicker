@@ -97,7 +97,7 @@ class MouseController(object):
     """Control mouse."""
 
     def __init__(self):
-        self._runner = XDoTool()
+        self._mouse_controller = PyMouse()
         self._delay_before = 0
         self._delay_after = 0
 
@@ -139,15 +139,15 @@ class MouseController(object):
         :param position: position where the mouse will be moved
         :type position: instance of the Point class
         """
-        self._runner.run_tool(["mousemove", "--sync",
-                               position.str_x, position.str_y])
+        self._mouse_controller.move(position.x, position.y)
 
     def left_click(self):
         """Click left mouse button on the actual position."""
         if self._delay_before != 0:
             time.sleep(self._delay_before)
 
-        self._runner.run_tool(["click", "1"])
+        # click on current position
+        self._mouse_controller.click(*self._mouse_controller.position())
 
         if self._delay_after != 0:
             time.sleep(self._delay_after)

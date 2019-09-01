@@ -3,6 +3,8 @@
 import subprocess
 import time
 
+from pymouse import PyMouse
+
 
 class XDoTool(object):
     """Do a low level calls and reading of xdotool."""
@@ -55,14 +57,8 @@ class MouseLocator(object):
     """Class to get location of the class."""
 
     def __init__(self):
-        self._runner = XDoTool()
-        self._window = ""
         self._coordinates = Point(0, 0)
-
-    @property
-    def window(self):
-        """Get window ID where the mouse is now."""
-        return self._window
+        self._mouse_controller = PyMouse()
 
     @property
     def coordinates(self):
@@ -92,19 +88,7 @@ class MouseLocator(object):
 
     def get_mouse_location(self):
         """Get and store mouse location."""
-        out = self._runner.run_tool(['getmouselocation', '--shell'])
-        x = 0
-        y = 0
-
-        for line in out.strip().split('\n'):
-            (key, value) = line.split('=')
-
-            if key == 'X':
-                x = int(value)
-            elif key == 'Y':
-                y = int(value)
-            elif key == "WINDOW":
-                self._window = int(value)
+        x, y = self._mouse_controller.position()
 
         self._coordinates = Point(x, y)
 
@@ -112,7 +96,7 @@ class MouseLocator(object):
 class MouseController(object):
     """Control mouse."""
 
-    def __init__(self, window=None):
+    def __init__(self):
         self._runner = XDoTool()
         self._delay_before = 0
         self._delay_after = 0
@@ -172,4 +156,4 @@ class MouseController(object):
 if __name__ == "__main__":
     mouse = MouseLocator()
     mouse.get_mouse_location()
-    print(mouse.coordinates, mouse.window)
+    print(mouse.coordinates)
